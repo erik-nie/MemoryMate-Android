@@ -1,0 +1,6 @@
+- Updated for the latest Android version
+- Fixed the calendar permission prompt that could keep reappearing
+- Fixed double-tapping the clock to switch display modes
+- Fixed a possible crash with languages that use non-Latin digits
+- Better layout for right-to-left languages such as Arabic
+- Removed permissions the app does not use

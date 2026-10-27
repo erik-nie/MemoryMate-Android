@@ -1,0 +1,6 @@
+- Bijgewerkt voor de nieuwste Android-versie
+- Agenda-toestemming die steeds kon terugkomen is opgelost
+- Dubbelklikken op de klok om de weergave te wisselen werkt nu betrouwbaar
+- Mogelijke crash opgelost bij talen met niet-Latijnse cijfers
+- Betere weergave in talen die van rechts naar links gelezen worden, zoals Arabisch
+- Ongebruikte permissies verwijderd
