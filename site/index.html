@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="nl" data-lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MemoryMate – a calm calendar clock · een rustige kalenderklok</title>
+<meta name="description" content="MemoryMate is a free, calm calendar clock for people with dementia, Alzheimer's or an intellectual disability, seniors and young children. Gratis kalenderklok voor Android, iPhone en iPad.">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<meta property="og:title" content="MemoryMate – a calm calendar clock · een rustige kalenderklok">
+<meta property="og:description" content="Free for Android, iPhone and iPad. Gratis voor Android, iPhone en iPad.">
+<meta property="og:image" content="img/shot-en.png">
+<style>
+:root{
+  --bg:#050535; --panel:#0c0c4a; --panel2:#15155e; --line:#2a2a78;
+  --text:#f4f5ff; --muted:#aab0d8; --blue:#5aa9ff; --yellow:#ffd23f;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+html[data-lang=nl] .en,html[data-lang=en] .nl{display:none!important}
+nav{position:sticky;top:0;z-index:10;background:rgba(5,5,53,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:22px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px;color:var(--text)}
+.brand img{width:34px;height:34px;border-radius:8px}
+.brand:hover{text-decoration:none}
+nav .links{margin-left:auto;display:flex;gap:20px;align-items:center;font-size:15px}
+nav .links a{color:var(--muted)} nav .links a:hover{color:var(--text);text-decoration:none}
+.lang{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.lang button{background:none;border:0;color:var(--muted);font:inherit;font-size:14px;padding:6px 12px;cursor:pointer}
+html[data-lang=nl] .lang [data-set=nl],html[data-lang=en] .lang [data-set=en]{background:var(--blue);color:#050535;font-weight:700}
+@media(max-width:700px){nav .links a.hide{display:none}}
+.hero{padding:72px 0 30px;text-align:center;background:radial-gradient(900px 420px at 50% -10%,rgba(90,169,255,.25),transparent 70%)}
+.hero img.logo{width:92px;height:92px;border-radius:22px;box-shadow:0 10px 40px rgba(90,169,255,.35)}
+h1{font-size:clamp(32px,5vw,54px);line-height:1.12;margin:22px auto 16px;letter-spacing:-.02em;max-width:860px;text-wrap:balance}
+h1 em{font-style:normal;color:var(--yellow)}
+.lead{max-width:700px;margin:0 auto 28px;color:var(--muted);font-size:clamp(18px,2.4vw,21px)}
+.stores{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;align-items:center}
+.stores img{height:56px;width:auto;display:block}
+.small{color:var(--muted);font-size:14px;margin-top:14px}
+.shot{margin:46px auto 0;max-width:820px}
+.shot img{width:100%;height:auto;display:block;border-radius:18px;border:1px solid var(--line);box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.cap{color:var(--muted);font-size:14px;margin-top:12px;text-align:center}
+section{padding:76px 0}
+section.alt{background:var(--panel)}
+.kicker{color:var(--yellow);font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase}
+h2{font-size:clamp(27px,4vw,38px);line-height:1.15;margin:8px 0 14px;letter-spacing:-.01em}
+.sub{color:var(--muted);max-width:700px;margin:0 0 36px}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:24px}
+section.alt .card{background:var(--bg)}
+.card h3{margin:0 0 8px;font-size:19px}
+.card p{margin:0;color:var(--muted);font-size:16px}
+.video{max-width:820px;margin:0 auto}
+.video video{width:100%;height:auto;display:block;border-radius:16px;border:1px solid var(--line);background:#000}
+.split{display:grid;gap:36px;grid-template-columns:1fr 1.1fr;align-items:center}
+.split img{width:100%;height:auto;border-radius:14px;border:1px solid var(--line)}
+@media(max-width:760px){.split{grid-template-columns:1fr}}
+.steps{counter-reset:s;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.steps .card{position:relative;padding-top:56px}
+.steps .card::before{counter-increment:s;content:counter(s);position:absolute;top:18px;left:24px;width:28px;height:28px;border-radius:50%;
+  background:var(--yellow);color:#050535;display:grid;place-items:center;font-weight:700;font-size:15px}
+.support{text-align:center}
+.support p{max-width:620px;margin:0 auto 22px;color:var(--muted)}
+.priv{max-width:760px;color:var(--muted)}
+footer{padding:36px 0;border-top:1px solid var(--line);color:var(--muted);font-size:14px}
+footer .wrap{display:flex;gap:16px;flex-wrap:wrap;justify-content:space-between}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="brand" href="#top"><img src="img/icon.png" alt="">MemoryMate</a>
+  <div class="links">
+    <a class="hide" href="#video"><span class="nl">Video</span><span class="en">Video</span></a>
+    <a class="hide" href="#use"><span class="nl">Gebruik</span><span class="en">How to use</span></a>
+    <a class="hide" href="#privacy"><span class="nl">Privacy</span><span class="en">Privacy</span></a>
+    <a href="https://ko-fi.com/eriknie" target="_blank" rel="noopener">Ko-fi</a>
+    <div class="lang"><button data-set="nl">NL</button><button data-set="en">EN</button></div>
+  </div>
+</div></nav>
+
+<header class="hero" id="top"><div class="wrap">
+  <img class="logo" src="img/icon.png" alt="MemoryMate">
+  <h1><span class="nl">Een rustige <em>kalenderklok</em> voor elke dag</span><span class="en">A calm <em>calendar clock</em> for every day</span></h1>
+  <p class="lead">
+    <span class="nl">Voor mensen met dementie, Alzheimer of een verstandelijke beperking, ouderen en jonge kinderen. Altijd in één oogopslag: hoe laat het is, welke dag het is en wat er gepland staat. Gratis.</span>
+    <span class="en">For people with dementia, Alzheimer's or an intellectual disability, seniors and young children. See at a glance what time it is, what day it is and what is planned. Free.</span>
+  </p>
+  <div class="stores">
+    <a href="https://play.google.com/store/apps/details?id=com.eriknie.memorymate" target="_blank" rel="noopener"><img src="img/playstore.png" alt="Get it on Google Play"></a>
+    <a href="https://apps.apple.com/nl/app/memorymate/id6447966369" target="_blank" rel="noopener"><img src="img/appstore.png" alt="Download on the App Store"></a>
+  </div>
+  <p class="small"><span class="nl">Android 8.0+ · iPhone, iPad en Mac (iOS 9+)</span><span class="en">Android 8.0+ · iPhone, iPad and Mac (iOS 9+)</span></p>
+  <div class="shot">
+    <img class="nl" src="img/shot-nl.png" alt="MemoryMate op een iPad">
+    <img class="en" src="img/shot-en.png" alt="MemoryMate on an iPad">
+  </div>
+</div></header>
+
+<section id="video"><div class="wrap">
+  <div class="kicker"><span class="nl">Bekijk hoe het werkt</span><span class="en">See how it works</span></div>
+  <h2><span class="nl">De app in één minuut</span><span class="en">The app in one minute</span></h2>
+  <div class="video">
+    <video class="nl" controls preload="metadata" poster="img/poster-nl.jpg" playsinline><source src="video/demo-nl.mp4" type="video/mp4"></video>
+    <video class="en" controls preload="metadata" poster="img/poster-en.jpg" playsinline><source src="video/demo-en.mp4" type="video/mp4"></video>
+  </div>
+</div></section>
+
+<section class="alt" id="features"><div class="wrap">
+  <div class="kicker"><span class="nl">Waarom MemoryMate</span><span class="en">Why MemoryMate</span></div>
+  <h2><span class="nl">Rustig, groot en duidelijk</span><span class="en">Calm, large and clear</span></h2>
+  <p class="sub"><span class="nl">Geen afleiding, geen onnodige knoppen. Alleen de tijd en wat er komt.</span><span class="en">No distractions, no unnecessary buttons. Just the time and what is coming up.</span></p>
+  <div class="grid">
+    <div class="card"><h3><span class="nl">Analoog en digitaal</span><span class="en">Analog and digital</span></h3><p><span class="nl">Drie weergaven: analoog en digitaal, alleen analoog of alleen digitaal. Dubbel tikken op de klok wisselt.</span><span class="en">Three displays: analog and digital, analog only or digital only. Double-tap the clock to switch.</span></p></div>
+    <div class="card"><h3><span class="nl">Afspraken uit je agenda</span><span class="en">Appointments from your calendar</span></h3><p><span class="nl">Toont 3 tot 10 afspraken uit elke agenda op het toestel: Google, Outlook of een gedeelde agenda.</span><span class="en">Shows 3 to 10 appointments from any calendar on the device: Google, Outlook or a shared calendar.</span></p></div>
+    <div class="card"><h3><span class="nl">Op afstand vullen</span><span class="en">Fill it from a distance</span></h3><p><span class="nl">Met een gedeelde agenda voegen familie of zorgverleners afspraken toe zonder langs te komen.</span><span class="en">With a shared calendar, family or caregivers can add appointments without visiting.</span></p></div>
+    <div class="card"><h3><span class="nl">Grote, contrastrijke tekst</span><span class="en">Large, high-contrast text</span></h3><p><span class="nl">Met een schuifbalk maak je de tekst precies zo groot als nodig (50–200%).</span><span class="en">A slider sets the text exactly as large as needed (50–200%).</span></p></div>
+    <div class="card"><h3><span class="nl">Altijd aan op de lader</span><span class="en">Always on while charging</span></h3><p><span class="nl">Aan de lader blijft het scherm aan, dus ideaal als tafel- of nachtklok. Het batterijpercentage staat in beeld.</span><span class="en">The screen stays on while charging, so it works as a table or bedside clock. The battery level is shown.</span></p></div>
+    <div class="card"><h3><span class="nl">Jouw taal</span><span class="en">Your language</span></h3><p><span class="nl">Volgt de taal en regio van het toestel, ook van rechts naar links zoals Arabisch. Staand en liggend.</span><span class="en">Follows the device language and region, including right-to-left languages such as Arabic. Portrait and landscape.</span></p></div>
+  </div>
+</div></section>
+
+<section id="use"><div class="wrap">
+  <div class="kicker"><span class="nl">Aan de slag</span><span class="en">Getting started</span></div>
+  <h2><span class="nl">In vier stappen klaar</span><span class="en">Ready in four steps</span></h2>
+  <div class="steps">
+    <div class="card"><h3><span class="nl">Installeer</span><span class="en">Install</span></h3><p><span class="nl">Download MemoryMate gratis in de Play Store of App Store.</span><span class="en">Download MemoryMate for free from Google Play or the App Store.</span></p></div>
+    <div class="card"><h3><span class="nl">Geef toegang</span><span class="en">Allow access</span></h3><p><span class="nl">Sta toe dat de app je agenda mag lezen.</span><span class="en">Allow the app to read your calendar.</span></p></div>
+    <div class="card"><h3><span class="nl">Kies de agenda</span><span class="en">Choose the calendar</span></h3><p><span class="nl">Tik op het kleine agenda-icoon linksboven en kies de agenda die je wilt tonen.</span><span class="en">Tap the small calendar icon at the top left and pick the calendar to show.</span></p></div>
+    <div class="card"><h3><span class="nl">Dubbel tikken</span><span class="en">Double-tap</span></h3><p><span class="nl">Op de klok wisselt de weergave, op de afspraken verandert het aantal (3 tot 10).</span><span class="en">On the clock to change the display, on the appointments to change how many are shown (3 to 10).</span></p></div>
+  </div>
+  <div class="split" style="margin-top:56px">
+    <img src="img/phone.png" alt="MemoryMate">
+    <div>
+      <h3><span class="nl">Gedeelde agenda</span><span class="en">Shared calendar</span></h3>
+      <p style="color:var(--muted)"><span class="nl">De agenda kan ook een gedeelde agenda zijn. Zo kunnen familie of zorgverleners op afstand afspraken toevoegen. Zie voor iPhone en iPad de uitleg van Apple over
+        <a href="https://support.apple.com/nl-nl/guide/iphone/iph7613c4fb/ios" target="_blank" rel="noopener">agenda's delen</a>.</span>
+      <span class="en">The calendar can also be a shared calendar, so family or caregivers can add appointments from a distance. For iPhone and iPad see Apple's guide to
+        <a href="https://support.apple.com/guide/iphone/iph7613c4fb/ios" target="_blank" rel="noopener">sharing calendars</a>.</span></p>
+    </div>
+  </div>
+</div></section>
+
+<section class="alt support"><div class="wrap">
+  <div class="kicker"><span class="nl">Steun</span><span class="en">Support</span></div>
+  <h2><span class="nl">MemoryMate blijft gratis</span><span class="en">MemoryMate stays free</span></h2>
+  <p><span class="nl">MemoryMate is gratis en zonder reclame, en wordt in vrije tijd gemaakt. Vind je de app nuttig? Dan kun je de ontwikkeling steunen met een kop koffie.</span>
+     <span class="en">MemoryMate is free and ad-free, and built in spare time. If you find it useful, you can support its development with a cup of coffee.</span></p>
+  <a href="https://ko-fi.com/eriknie" target="_blank" rel="noopener"><img height="40" style="border:0;height:40px" src="https://storage.ko-fi.com/cdn/kofi3.png?v=3" alt="Support MemoryMate on Ko-fi"></a>
+</div></section>
+
+<section id="privacy"><div class="wrap">
+  <div class="kicker">Privacy</div>
+  <h2><span class="nl">Privacyverklaring</span><span class="en">Privacy policy</span></h2>
+  <p class="priv"><span class="nl">MemoryMate verzamelt geen persoonlijke gegevens. De app leest alleen de agenda op je toestel om de afspraken te tonen en stuurt niets door. Als wij toch persoonlijke gegevens van je zouden hebben, verkopen of geven we die niet vrijwillig aan anderen, behalve als de wet ons daartoe verplicht, en dan alleen nadat je, voor zover de wet dat toestaat, de kans hebt gekregen daartegen bezwaar te maken.</span>
+  <span class="en">MemoryMate does not collect any personal information from your use of our apps. The app only reads the calendar on your device to show the appointments and sends nothing anywhere. If we have any of your personal information we will not willingly sell or give it to anyone, except if lawfully subpoenaed to produce it and then only after offering you a reasonable chance to challenge such subpoena if allowed by law.</span></p>
+  <p class="priv"><span class="nl">Vragen of opmerkingen?</span><span class="en">Questions or feedback?</span> <a href="mailto:erik.nouveaupays@gmail.com"><span class="nl">Stuur een e-mail</span><span class="en">Send an email</span></a></p>
+</div></section>
+
+<footer><div class="wrap">
+  <span>© MemoryMate · Erik Nieuwlands</span>
+  <span><a href="https://github.com/erik-nie/MemoryMate-Android">GitHub</a> · <a href="https://ko-fi.com/eriknie">Ko-fi</a> · <a href="https://play.google.com/store/apps/details?id=com.eriknie.memorymate">Google Play</a> · <a href="https://apps.apple.com/nl/app/memorymate/id6447966369">App Store</a></span>
+</div></footer>
+
+<script>
+(function(){
+  var d=document.documentElement,l=null;
+  try{l=localStorage.getItem('mm-lang')}catch(e){}
+  if(!l)l=(navigator.language||'').toLowerCase().indexOf('nl')===0?'nl':'en';
+  function set(v){d.setAttribute('data-lang',v);d.lang=v;try{localStorage.setItem('mm-lang',v)}catch(e){}
+    document.querySelectorAll('video').forEach(function(x){x.pause()})}
+  set(l);
+  document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){set(b.dataset.set)})});
+})();
+</script>
+</body>
+</html>

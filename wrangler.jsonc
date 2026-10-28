@@ -1,0 +1,8 @@
+{
+  // Cloudflare: publiceert de statische website in site/ (zie README).
+  "name": "memorymate",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./site"
+  }
+}
