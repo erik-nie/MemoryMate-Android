@@ -6,7 +6,7 @@ from a calm, easy-to-read display of the time and the day's appointments.**
 [![Build](https://github.com/erik-nie/MemoryMate-Android/actions/workflows/build.yml/badge.svg)](https://github.com/erik-nie/MemoryMate-Android/actions/workflows/build.yml)
 [![Get it on Google Play](https://img.shields.io/badge/Google%20Play-MemoryMate-3DDC84?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.eriknie.memorymate)
 
-Website: <https://memorymate.eriknie.synology.me/> · Package: `com.eriknie.memorymate` · Current version: **2.0**
+Website: <https://memorymate-android.merik2.workers.dev/> · Package: `com.eriknie.memorymate` · Current version: **2.0**
 
 ![MemoryMate on tablet and phone](docs/images/android-promo.png)
 
@@ -164,4 +164,4 @@ de tabel onder *Repository secrets*.
 ## Contact
 
 Questions or ideas? Open an [issue](https://github.com/erik-nie/MemoryMate-Android/issues) or visit the
-[website](https://memorymate.eriknie.synology.me/).
+[website](https://memorymate-android.merik2.workers.dev/).
