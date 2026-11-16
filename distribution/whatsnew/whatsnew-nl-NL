@@ -1,6 +1,7 @@
-- Bijgewerkt voor de nieuwste Android-versie
-- Agenda-toestemming die steeds kon terugkomen is opgelost
-- Dubbelklikken op de klok om de weergave te wisselen werkt nu betrouwbaar
-- Mogelijke crash opgelost bij talen met niet-Latijnse cijfers
-- Betere weergave in talen die van rechts naar links gelezen worden, zoals Arabisch
-- Ongebruikte permissies verwijderd
+- Nieuw uiterlijk, gelijk aan MemoryMate op iPhone en iPad
+- 5 kleurstijlen: Midnight, Daylight, Forest, Amber en Contrast
+- 6 analoge klokstijlen met schaduw op de wijzers, en een LCD-digitale klok
+- Seconden apart aan of uit voor de analoge en de digitale klok
+- Instelling voor tekstgrootte en duidelijkere afsprakenblokken
+- Instellingen open je door 2 seconden op het agenda-icoon te drukken
+- De batterij-indicator is altijd rood

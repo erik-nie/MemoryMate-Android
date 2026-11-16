@@ -1,6 +1,7 @@
-- Updated for the latest Android version
-- Fixed the calendar permission prompt that could keep reappearing
-- Fixed double-tapping the clock to switch display modes
-- Fixed a possible crash with languages that use non-Latin digits
-- Better layout for right-to-left languages such as Arabic
-- Removed permissions the app does not use
+- New look, identical to MemoryMate on iPhone and iPad
+- 5 color styles: Midnight, Daylight, Forest, Amber and Contrast
+- 6 analog clock styles with shadowed hands, and an LCD digital clock
+- Show or hide seconds separately for the analog and digital clock
+- Event text size setting, and clearer event blocks
+- Settings now open by holding the calendar icon for 2 seconds
+- Battery indicator is always red

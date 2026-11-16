@@ -83,10 +83,14 @@ val CALENDAR_NAME_KEY = stringPreferencesKey("calendar_name")
 
 const val HOLD_MILLIS = 2000L
 
+/** LCD-style font of the digital clock (same font as the iOS app). */
+var digitalTypeface: android.graphics.Typeface? = null
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppSettings.init(this)
+        digitalTypeface = androidx.core.content.res.ResourcesCompat.getFont(this, R.font.technology_bold)
         enableEdgeToEdge()
         setContent { MainScreen() }
     }
@@ -417,7 +421,7 @@ private class ClockText(private val canvas: android.graphics.Canvas) {
     fun text(s: String, cx: Float, cy: Float, size: Float, color: Int, bold: Boolean, maxWidth: Float = Float.MAX_VALUE,
              mono: Boolean = false) {
         paint.reset(); paint.isAntiAlias = true
-        paint.typeface = android.graphics.Typeface.create(
+        paint.typeface = if (mono && digitalTypeface != null) digitalTypeface else android.graphics.Typeface.create(
             if (mono) android.graphics.Typeface.MONOSPACE else android.graphics.Typeface.DEFAULT,
             if (bold) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
         paint.textSize = size

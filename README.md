@@ -6,7 +6,7 @@ from a calm, easy-to-read display of the time and the day's appointments.**
 [![Build](https://github.com/erik-nie/MemoryMate-Android/actions/workflows/build.yml/badge.svg)](https://github.com/erik-nie/MemoryMate-Android/actions/workflows/build.yml)
 [![Get it on Google Play](https://img.shields.io/badge/Google%20Play-MemoryMate-3DDC84?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.eriknie.memorymate)
 
-Website: <https://memorymate-android.merik2.workers.dev/> · Package: `com.eriknie.memorymate` · Current version: **2.0**
+Website: <https://memorymate-android.merik2.workers.dev/> · Package: `com.eriknie.memorymate` · Current version: **3.0**
 
 ![MemoryMate on tablet and phone](docs/images/android-promo.png)
 
@@ -16,14 +16,19 @@ Website: <https://memorymate-android.merik2.workers.dev/> · Package: `com.erikn
 
 ## Features
 
-- **Analog and digital clock** – three display modes: analog + digital, analog only, digital only.
-  Double-tap the clock to switch.
+Android and iOS look and behave the same. Everything is set in the settings screen, which opens when you
+**hold the calendar icon (top left) for 2 seconds** (a short tap only shows a hint).
+
+- **Analog and digital clock** – show both, analog only or digital only. The digital clock uses an LCD-style font.
+- **Six analog clock styles** – Classic, Slim, Railway, Romantic, Minimal and Modern, with soft shadows on the hands.
+- **Seconds on or off** – separate switches for the analog and the digital clock.
+- **Five color styles** – Midnight, Daylight, Forest, Amber and Contrast (all with strong text contrast).
 - **Upcoming events** from any calendar on the device (Google, Outlook, shared calendars, …).
-  Shows 3 to 10 events; double-tap the event area to cycle through the amount.
-- **Large, high-contrast text**, adjustable with a text-scaling slider (50 % – 200 %).
-- **Battery indicator** – while charging the screen stays on, so the device works as a bedside or table clock.
+  Shows 3 to 10 events in clear blocks with the date, time and title.
+- **Event text size** from 50 % to 140 %.
+- **Battery indicator** (always red) – while charging the screen stays on, so the device works as a bedside or table clock.
 - **Portrait and landscape**, phones and tablets.
-- **Follows the device language and region**, including right-to-left languages such as Arabic.
+- **Follows the device language and region** for dates and times; the app's own texts are in English.
 - **Private by design** – the app only needs permission to *read* your calendar, has no internet permission,
   and no data leaves the device.
 
@@ -38,9 +43,9 @@ Website: <https://memorymate-android.merik2.workers.dev/> · Package: `com.erikn
 
 1. Install MemoryMate from [Google Play](https://play.google.com/store/apps/details?id=com.eriknie.memorymate).
 2. Allow access to your calendar when asked.
-3. Tap the small calendar icon (top left) → **Change Calendar** and pick the calendar to show.
-4. Double-tap the **clock** to change the display mode; double-tap the **events** to change how many are shown.
-5. Optional: adjust **Text Scaling** in the same settings dialog.
+3. **Hold** the small calendar icon (top left) for 2 seconds to open the settings, then tap **Choose calendar**.
+4. Pick a color style, the clock, the analog clock style, whether seconds are shown, how many events are
+   shown (3 to 10) and the event text size.
 
 ## Build from source
 
@@ -110,8 +115,8 @@ Add these under *Settings → Secrets and variables → Actions*:
 3. Commit, then tag and push:
 
    ```bash
-   git tag v2.1
-   git push origin v2.1
+   git tag v3.1
+   git push origin v3.1
    ```
 
    The workflow checks that the tag matches `versionName`, builds and signs the bundle, and uploads it to the
@@ -125,7 +130,9 @@ Add these under *Settings → Secrets and variables → Actions*:
 ## Project structure
 
 ```
-app/src/main/java/com/eriknie/memorymate/MainActivity.kt   # whole UI: clock, calendar list, settings dialog
+app/src/main/java/com/eriknie/memorymate/MainActivity.kt   # screen, calendar access, event blocks, settings dialog
+app/src/main/java/com/eriknie/memorymate/ClockFace.kt      # analog clock styles (port of the iOS clock)
+app/src/main/java/com/eriknie/memorymate/Settings.kt       # color styles and persisted settings
 app/src/main/AndroidManifest.xml                           # only the READ_CALENDAR permission
 app/build.gradle.kts                                       # version, SDK levels, signing via environment variables
 gradle/libs.versions.toml                                  # dependency versions
@@ -146,10 +153,8 @@ afspraken uit een agenda die op het toestel staat, ook een gedeelde of Google/Ou
 ### Gebruik
 
 1. Installeer de app via [Google Play](https://play.google.com/store/apps/details?id=com.eriknie.memorymate) en geef toegang tot de agenda.
-2. Tik op het kleine agenda-icoon (linksboven) → **Change Calendar** en kies je agenda.
-3. **Dubbel tikken op de klok** wisselt tussen analoog + digitaal, alleen analoog en alleen digitaal.
-4. **Dubbel tikken op de afspraken** wisselt het aantal getoonde afspraken (3 tot 10).
-5. De tekstgrootte stel je in met de schuifregelaar **Text Scaling**.
+2. **Houd het agenda-icoon (linksboven) 2 seconden ingedrukt** om de instellingen te openen (kort tikken toont alleen een hint) en kies **Choose calendar**.
+3. Kies een kleurstijl, de klok (analoog, digitaal of beide), de analoge klokstijl, of seconden getoond worden, het aantal afspraken (3 tot 10) en de tekstgrootte.
 
 Tijdens het opladen blijft het scherm aan, zodat het toestel als tafelklok kan dienen. De app gebruikt de taal en
 regio van het toestel en vraagt alleen toestemming om de agenda te *lezen*; er wordt niets verstuurd.
