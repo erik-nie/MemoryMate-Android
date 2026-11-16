@@ -6,7 +6,7 @@ from a calm, easy-to-read display of the time and the day's appointments.**
 [![Build](https://github.com/erik-nie/MemoryMate-Android/actions/workflows/build.yml/badge.svg)](https://github.com/erik-nie/MemoryMate-Android/actions/workflows/build.yml)
 [![Get it on Google Play](https://img.shields.io/badge/Google%20Play-MemoryMate-3DDC84?logo=googleplay&logoColor=white)](https://play.google.com/store/apps/details?id=com.eriknie.memorymate)
 
-Website: <https://merik.app/memorymate/> · Package: `com.eriknie.memorymate` · Current version: **3.0**
+Website: <https://merik.app/memorymate/> · Package: `com.eriknie.memorymate` · Current version: **3.0.1**
 
 ![MemoryMate on tablet and phone](docs/images/android-promo.png)
 

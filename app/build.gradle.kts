@@ -12,8 +12,8 @@ android {
         applicationId = "com.eriknie.memorymate"
         minSdk = 26
         targetSdk = 36
-        versionCode = 30
-        versionName = "3.0"
+        versionCode = 31
+        versionName = "3.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -37,7 +37,8 @@ android {
                 signingConfig = signingConfigs.getByName("release")
             }
             buildConfigField("String", "BUILD_TIME", "\"${System.currentTimeMillis()}\"")
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
