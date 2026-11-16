@@ -331,7 +331,7 @@ private fun MemoryMateContent(theme: Theme) {
                 val bx = cx0 + cw - icon / 2; val by = cy0 + icon / 2
                 fonts.fillCircle(bx, by, icon / 2, theme.block.toArgb(), theme.border.toArgb(), 1f * density.density)
                 fonts.text(if (batteryPct < 0) "--" else "$batteryPct%", bx, by, icon * 0.3f,
-                    (if (plugged) theme.text else theme.warning).toArgb(), bold = true, maxWidth = icon * 0.86f)
+                    theme.battery.toArgb(), bold = true, maxWidth = icon * 0.86f)
             }
         }
 

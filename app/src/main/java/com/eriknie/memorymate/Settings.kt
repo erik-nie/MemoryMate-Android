@@ -27,6 +27,8 @@ class Theme(
     val hourHand = Color(0xFF000000 or (hours ?: text))
     val minuteHand = Color(0xFF000000 or (minutes ?: accent))
     val tick = this.secondary
+    /** Battery indicator: always red (a brighter red on dark backgrounds, a darker one on light backgrounds). */
+    val battery = if (isDark) Color(0xFFFF5252) else Color(0xFFC62828)
 
     companion object {
         val midnight = Theme(0x050535, 0x202050, 0x3A3A7A, 0xFFFFFF, 0xC4C4E8, 0xFFCF09, 0xFF5555, 0xFFB020,
