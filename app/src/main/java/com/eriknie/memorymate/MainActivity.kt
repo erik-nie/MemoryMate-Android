@@ -1,152 +1,101 @@
-@file:Suppress("LanguageDetectionInspection")
-
 package com.eriknie.memorymate
 
-import android.content.BroadcastReceiver
+import android.Manifest
+import android.app.Activity
+import android.content.ContentUris
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.BatteryManager
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
-import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import java.util.Date
-import java.util.Locale
-import android.Manifest
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.ContentResolver
-import android.provider.CalendarContract
-import android.content.Context
-import android.content.res.Configuration
-import android.content.res.Resources
-import android.graphics.Paint
-import android.graphics.Typeface
 import android.os.Build
-import android.view.View
+import android.os.Bundle
+import android.provider.CalendarContract
+import android.text.format.DateFormat
 import android.view.WindowInsets
 import android.view.WindowInsetsController
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
-import java.util.Calendar
-import androidx.compose.foundation.layout.*
-import androidx.compose.ui.graphics.nativeCanvas
-import android.text.format.DateFormat
 import android.view.WindowManager
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.ContextCompat
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import kotlin.math.max
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.text.style.TextOverflow
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import kotlin.math.cos
-import kotlin.math.sin
-import android.content.ContentUris
-import androidx.compose.material3.Slider
 import kotlin.math.min
 import kotlin.math.roundToInt
-import kotlin.time.Duration.Companion.seconds
 
-
-const val SHOW_VERSION = true
-val COLOR_BACKGROUND = Color(0xff050535) // main screen background
-val COLOR_BACKGROUND_DIGITAL = Color(0x88000000) // main screen background
-
-val COLOR_SECONDS = Color(0xFFFF1108)
-val COLOR_MINUTES = Color(0xFFFFCF09)
-val COLOR_HOURS = Color(0xFF60C93F)
-val COLOR_BACK = Color(0xFF252555)
-val COLOR_TITLE = Color(0xFF45457F)
-val COLOR_HOUR_TICKS = Color(0xFFFFFFFF)
-val COLOR_MINUTE_TICKS = Color(0xFFAAAAAA)
-val COLOR_SHADOW = Color(0x50000000)
-const val EVENT_AMOUNT_MIN = 3
-const val EVENT_AMOUNT_MAX = 10
-const val EVENT_AMOUNT_DEFAULT = 5
-
-// DataStore extensie
 val Context.dataStore by preferencesDataStore(name = "settings")
 val CALENDAR_NAME_KEY = stringPreferencesKey("calendar_name")
 
-const val doubleClickThreshold = 250 // Time threshold for double-click in milliseconds
-
-var globalBuildInfo = ""
+const val HOLD_MILLIS = 2000L
 
 class MainActivity : ComponentActivity() {
-
-    //private lateinit var wakeLock: PowerManager.WakeLock
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Verkrijg een PowerManager instantie
-
-//        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-//        wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "MyApp::WakeLockTag")
-
-        // Registreer BroadcastReceiver om batterijstatus te volgen
-//        val filter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-//        registerReceiver(batteryReceiver, filter)
-
+        AppSettings.init(this)
         enableEdgeToEdge()
-        setContent {
-            MainScreen()
-        }
+        setContent { MainScreen() }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            hideSystemBars()
-        }
+        if (hasFocus) hideSystemBars()
     }
+
     private fun hideSystemBars() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.insetsController?.let { controller ->
@@ -156,996 +105,632 @@ class MainActivity : ComponentActivity() {
         } else {
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = (
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            or View.SYSTEM_UI_FLAG_FULLSCREEN
-                            or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            or android.view.View.SYSTEM_UI_FLAG_FULLSCREEN
+                            or android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            or android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            or android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            or android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     )
         }
     }
-
-
-    //BroadcastReceiver om batterijstatus te detecteren
-//    private val batteryReceiver = object : BroadcastReceiver() {
-//        override fun onReceive(context: Context, intent: Intent) {
-//            val status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
-//
-//            if (status == BatteryManager.BATTERY_STATUS_CHARGING ||
-//                status == BatteryManager.BATTERY_STATUS_FULL) {
-//                // Het apparaat is aan de oplader
-//                if (!wakeLock.isHeld) {
-//                    wakeLock.acquire(10 * 60 * 1000L /*10 minuten*/)
-//                }
-//            } else {
-//                // Het apparaat is niet aan de oplader
-//                if (wakeLock.isHeld) {
-//                    wakeLock.release()
-//                }
-//            }
-//        }
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//        // Stop de receiver en release de WakeLock
-//        unregisterReceiver(batteryReceiver)
-//        if (wakeLock.isHeld) {
-//            wakeLock.release()
-//        }
-//    }
-
-
-
 }
 
+// ---------------------------------------------------------------------------------------------
+// Calendar access
+// ---------------------------------------------------------------------------------------------
 
-
-@Preview(showBackground = true)
-@Composable
-fun MainScreen() {
-    // The layout is positioned absolutely (calendar icon top-left, battery top-right),
-    // so keep it left-to-right in RTL languages; text itself still follows its own script.
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-        Surface(
-            modifier = Modifier.fillMaxSize(), // Zorgt ervoor dat de surface de hele ruimte opvult
-            color = COLOR_BACKGROUND  // Achtergrondkleur instellen
-        ) {
-            ClockDisplay()
-            DisplayCalendar()
-        }
-    }
-}
-
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    MemoryMateTheme {
-//        Greeting("Android")
-//    }
-//}
-
-//
-//@Composable
-//fun KeepScreenOnWhenCharging() {
-//    val context = LocalContext.current
-//    val window = (context as? Activity)?.window
-//
-//    // Check oplaadstatus bij opstarten
-//    val batteryManager = context.getSystemService(Context.BATTERY_SERVICE) as BatteryManager
-//    val isInitiallyCharging = batteryManager.isCharging
-//
-//    // Houd de huidige power status bij
-//    val isCharging = remember { mutableStateOf(isInitiallyCharging) }
-//
-//    LaunchedEffect(isCharging.value) {
-//        if (isCharging.value) {
-//            window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//            println("KeepScreenOnWhenCharging --> ON (Startup)")
-//        } else {
-//            window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//            println("KeepScreenOnWhenCharging --> OFF (Startup)")
-//        }
-//    }
-//
-//    DisposableEffect(context) {
-//        val receiver = object : BroadcastReceiver() {
-//            override fun onReceive(context: Context?, intent: Intent?) {
-//                when (intent?.action) {
-//                    Intent.ACTION_POWER_CONNECTED -> {
-//                        isCharging.value = true
-//                        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//                        println("KeepScreenOnWhenCharging --> ON")
-//                    }
-//                    Intent.ACTION_POWER_DISCONNECTED -> {
-//                        isCharging.value = false
-//                        window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//                        println("KeepScreenOnWhenCharging --> OFF")
-//                    }
-//                }
-//            }
-//        }
-//
-//        val filter = IntentFilter().apply {
-//            addAction(Intent.ACTION_POWER_CONNECTED)
-//            addAction(Intent.ACTION_POWER_DISCONNECTED)
-//        }
-//
-//        context.registerReceiver(receiver, filter)
-//
-//        onDispose {
-//            context.unregisterReceiver(receiver)
-//        }
-//    }
-//}
-
-// ✅ **Helper functie om te checken of de telefoon al aan het opladen is**
-//fun BatteryManager.isCharging(): Boolean {
-//    val status = this.getIntProperty(BatteryManager.BATTERY_PROPERTY_STATUS)
-//    return status == BatteryManager.BATTERY_STATUS_CHARGING || status == BatteryManager.BATTERY_STATUS_FULL
-//}
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// CLOCK STUFF
-///////////////////////////////////////////////////////////////////////////////////////////////////
-@Composable
-fun BuildInfoText() {
-    val context = LocalContext.current
-
-   // KeepScreenOnWhenCharging() // seems not to work stand-alone, but might help an certain devices
-
-    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-
-    val versionName = packageInfo.versionName
-
-    val buildTimeMillis = BuildConfig.BUILD_TIME.toLongOrNull() ?: 0L
-    val formattedBuildDate = Instant.ofEpochMilli(buildTimeMillis)
-        .atZone(ZoneId.systemDefault())
-        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-    globalBuildInfo = "v$versionName ($formattedBuildDate)"
-
-    /* do not display
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Spacer(modifier = Modifier.height(200.dp))
-        Text(text = formattedBuildTime, fontSize = 16.sp, color = Color(0x70FFFFFF))
-        Text(text = "Version: $versionName ($versionCode)", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color(0x70FFFFFF))
-    }
-    */
-
-}
-@SuppressLint("UnusedBoxWithConstraintsScope")
-@Composable
-fun ClockDisplay() {
-    val context = LocalContext.current
-    val window = (context as? Activity)?.window
-
-    val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-    val editor = sharedPreferences.edit()
-
-    val is24HourFormat = DateFormat.is24HourFormat(context)
-    //println(is24HourFormat)
-    var currentTime12 by remember { mutableStateOf(getCurrentTime(is24hourFormat = false)) }
-    var currentTime24 by remember { mutableStateOf(getCurrentTime(is24hourFormat = true)) }
-    var parsableTime by remember { mutableStateOf(getCurrentTimeParsable()) }
-
-    var batteryPct by remember { mutableIntStateOf(0) }
-    var chargingStatus by remember { mutableStateOf(false) }
-    var displayMode by remember { mutableIntStateOf(0) }
-
-    // if charging: keep on
-    if (chargingStatus) {
-        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    } else {
-        window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-    }
-
-    displayMode = sharedPreferences.getInt("displayMode", 0)
-
-    DisposableEffect(context) {
-        val intentFilter = IntentFilter(Intent.ACTION_BATTERY_CHANGED)
-        val batteryReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                val level = intent?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
-                val scale = intent?.getIntExtra(BatteryManager.EXTRA_SCALE, -1) ?: -1
-                val status = intent?.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
-
-                // Bereken batterijpercentage
-                if (level != -1 && scale != -1) {
-                    batteryPct = (level * 100) / scale
-                }
-
-                // Bepaal oplaadstatus
-                chargingStatus = when (status) {
-                    BatteryManager.BATTERY_STATUS_CHARGING -> true //"Opladen"
-                    BatteryManager.BATTERY_STATUS_FULL -> true //"Volledig opgeladen"
-                    //BatteryManager.BATTERY_STATUS_DISCHARGING -> false //"Ontladen"
-                    //BatteryManager.BATTERY_STATUS_NOT_CHARGING -> false //"Niet aan het opladen"
-                    else -> false //"Onbekend"
-                }
-            }
-        }
-        context.registerReceiver(batteryReceiver, intentFilter)
-
-        onDispose {
-            context.unregisterReceiver(batteryReceiver)
-        }
-    }
-
-    val currentTime = if (is24HourFormat) currentTime24 else currentTime12
-    // parse from an ASCII-digit string; localized digits (e.g. Arabic) would crash toInt()
-    val (hour, minute, sec) = getTimeFromString(parsableTime)
-    val configuration = LocalConfiguration.current
-    val isPortrait = (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(1.seconds) // Wacht 1 seconde
-            currentTime12 = getCurrentTime(is24hourFormat = false) // Update de tijd
-            currentTime24 = getCurrentTime(is24hourFormat = true) // Update de tijd
-            parsableTime = getCurrentTimeParsable()
-        }
-    }
-
-    // displayMode ---> 0:both, 1:analog 2:digital
-    val paddings = floatArrayOf(0.2f, 0f, 0f)
-    val bottomPaddingFactor = paddings[displayMode]
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
-        var lastClickTime by remember { mutableLongStateOf(0L) }
-        BoxWithConstraints(
-            modifier = Modifier
-                //.background(COLOR_BACKGROUND)
-                .clickable {
-                    val nowTime = System.currentTimeMillis()
-                    if (nowTime - lastClickTime <= doubleClickThreshold) {
-                        displayMode = if  (displayMode < 2) displayMode+1 else 0
-                        editor.putInt("displayMode", displayMode)
-                        editor.apply() // Opslaan
-                    }
-                    lastClickTime = nowTime
-                }
-                .then(
-                    if (isPortrait) {
-                        Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(0.5f) // Bovenste helft in portret
-                    } else {
-                        Modifier
-                            .fillMaxHeight()
-                            .fillMaxWidth(0.5f) // Linker helft in landschap
-                    }
-                ),
-            contentAlignment = Alignment.Center // Tekst in het midden
-            ) {
-                val bottomPadding = maxHeight * bottomPaddingFactor
-                Box(
-                    modifier = Modifier
-                        //.background(Color.Red)
-                        .fillMaxWidth()
-                        .padding(bottom = bottomPadding)
-
-                ) {
-                Canvas(modifier = Modifier.fillMaxSize()) {
-                    if (displayMode<2) {
-                        drawClockFace()
-                        // Ticks
-                        for (i in 1..60) {
-                            drawClockHand(angle = i*(360f/60f),startLength = 0.97f,handLength = 1f,strokeWidth = 0.005f,color = COLOR_MINUTE_TICKS,cap = StrokeCap.Square
-                            )
-                        }
-                        for (i in 1..12) {
-                            drawClockHand(angle = i*(360f/12f),startLength = 0.96f,handLength = 0.99f,strokeWidth = 0.015f,color = COLOR_HOUR_TICKS,cap = StrokeCap.Square
-                            )
-                        }
-                        drawHours()
-                        drawText(text="MemoryMate",x=0.5f,y=0.33f,textSizePerc=0.07f, textColor= COLOR_TITLE)
-
-                        drawClockHand(angle = (hour % 12 + minute / 60f) * 30f-90f,startLength = -0.1f,handLength = 0.6f,strokeWidth = 0.02f,color = COLOR_MINUTES)
-                        drawClockHand(angle = (minute + sec / 60f) * 6f-90f,startLength = -0.1f,handLength = 0.9f,strokeWidth = 0.02f,color = COLOR_HOURS)
-                        drawClockHand(angle = sec * 6f-90f, startLength = -0.2f,handLength = 0.8f,strokeWidth = 0.005f,color = COLOR_SECONDS)
-                        drawClockDot()
-                    }
-                    if (displayMode==0)  {
-                        drawText(text=currentTime,x=0.5f,y=1.04f,textSizePerc=0.110f, textColor=Color.White)
-                        drawText(text=getDateString(),x=0.5f,y=1.15f,textSizePerc=0.07f, textColor=Color.White)
-                    }
-                    if (displayMode==2)  {
-                        drawText(text=currentTime,x=0.5f,y=0.42f,textSizePerc=0.13f, textColor=Color.White, backgroundColor = COLOR_BACKGROUND_DIGITAL)
-                        drawText(text=getDateString(),x=0.5f,y=0.58f,textSizePerc=0.065f, textColor=Color.White)
-                    }
-                    drawBattery("$batteryPct%",if (chargingStatus) Color.White else Color.Red)
-
-                }
-               Text(text = "",color = Color.White,fontSize = 24.sp,fontWeight = FontWeight.Bold )
-            }
-        }
-    }
-
-    if (SHOW_VERSION) {
-        BuildInfoText()
-    }
-
-}
-
-
-fun DrawScope.drawHours(textColor: Color = Color.White) {
-    for(h in 1..12){
-        val radius = 9 * size.minDimension / 20
-        val textSizePx = 0.11f * size.minDimension
-        val centerX = size.width / 2
-        val centerY = size.height / 2
-        val radians = Math.toRadians((0f+h*360f/12f-90f).toDouble())
-        val setX =  centerX + 0.8f * radius * cos(radians).toFloat()
-        val setY =  centerY + 0.8f * radius * sin(radians).toFloat()
-        //println("X $X, Y $Y, h $h, radius $radius")
-        val paint = Paint().apply {
-            color = textColor.toArgb() // Set text color
-            textSize = textSizePx // Use already converted text size in pixels
-            typeface = Typeface.DEFAULT_BOLD // Bold text
-            isAntiAlias = true // Smooth edges
-        }
-        // Measure text width and height
-        val text = h.toString()
-        val textWidth = paint.measureText(text)
-        val textBounds = android.graphics.Rect()
-        paint.getTextBounds(text, 0, text.length, textBounds)
-        val textHeight = textBounds.height()
-        // Adjust position so (centerX, centerY) is the actual center of the text
-        val x = setX - (textWidth / 2)
-        val y = setY + (textHeight / 2)
-        drawContext.canvas.nativeCanvas.drawText(text, x, y, paint)
-
-    }
-}
-fun DrawScope.drawText(text: String, x: Float, y: Float, textSizePerc: Float, textColor: Color = Color.White, backgroundColor: Color = Color.Transparent) {
-    val textSizePx = textSizePerc * size.minDimension
-    val centerX = x * size.width
-    val centerY = y * size.height
-
-    val paint = Paint().apply {
-        color = textColor.toArgb()
-        textSize = textSizePx // Use already converted text size in pixels
-        typeface = Typeface.DEFAULT_BOLD // Bold text
-        isAntiAlias = true // Smooth edges
-    }
-    // Measure text width and height
-    val textWidth = paint.measureText(text)
-    val textBounds = android.graphics.Rect()
-    paint.getTextBounds(text, 0, text.length, textBounds)
-    val textHeight = textBounds.height()
-    // Adjust position so (centerX, centerY) is the actual center of the text
-    val textX = centerX - (textWidth / 2)
-    val textY = centerY + (textHeight / 2)
-
-    // Bepaal de rechthoek rond de tekst
-    val padding = textSizePx * 0.3f // Extra ruimte rond de tekst
-    val rectLeft = centerX - (textWidth / 2) - padding
-    val rectTop = centerY - (textHeight / 2) - 0.5f*padding
-    val rectRight = centerX + (textWidth / 2) + padding
-    val rectBottom = centerY + (textHeight / 2) + 1.5f*padding
-
-    // Teken de achtergrond rechthoek
-    drawRoundRect(
-        color = backgroundColor,
-        topLeft = Offset(rectLeft, rectTop),
-        size = Size(rectRight - rectLeft, rectBottom - rectTop),
-        cornerRadius = CornerRadius(50f,50f)
-    )
-
-    drawContext.canvas.nativeCanvas.drawText(text, textX, textY, paint)
-
-}
-fun DrawScope.drawClockFace() {
-    val radius = 9 * size.minDimension / 20
-    val centerX = size.width / 2
-    val centerY = size.height / 2
-    drawCircle(color = COLOR_BACK,radius = radius,center = Offset(centerX, centerY))
-}
-fun DrawScope.drawClockDot() {
-    val radius = 1 * size.minDimension / 60
-    val centerX = size.width / 2
-    val centerY = size.height / 2
-    drawCircle(color = COLOR_SECONDS,radius = radius,center = Offset(centerX, centerY))
-}
-fun DrawScope.drawBattery(text: String, textColor: Color) {
-    val radius = 0.07f * size.minDimension
-    val centerX = 0.88f * size.width
-    val centerY = 0.1f * size.height
-    drawCircle(color = COLOR_BACK,radius = radius,center = Offset(centerX, centerY))
-    drawText(text = text,x = 0.88f,y = 0.1f,textSizePerc = 0.045f,textColor = textColor)
-}
-
-fun DrawScope.drawClockHand(
-    angle: Float,
-    startLength: Float,
-    handLength: Float,
-    strokeWidth: Float,
-    color: Color = Color.Black,
-    cap: StrokeCap = StrokeCap.Round
-) {
-    val radius = 9 * size.minDimension / 20
-    val centerX = size.width / 2
-    val centerY = size.height / 2
-    val lineWidth = strokeWidth * size.minDimension
-    val radians = Math.toRadians(angle.toDouble())
-    val startX = centerX + startLength * radius * cos(radians).toFloat()
-    val startY = centerY + startLength * radius * sin(radians).toFloat()
-    val endX = centerX + handLength * radius * cos(radians).toFloat()
-    val endY = centerY + handLength * radius * sin(radians).toFloat()
-    val shadowDelta = size.minDimension / 90.0
-    if (startLength < 0.5) {
-        drawLine(color = COLOR_SHADOW,start = Offset((startX + shadowDelta).toFloat(), (startY + shadowDelta).toFloat()),end = Offset((endX +shadowDelta).toFloat(), (endY+shadowDelta).toFloat()),strokeWidth = lineWidth,cap = cap)
-    }
-    drawLine(color = color,start = Offset(startX, startY),end = Offset(endX, endY),strokeWidth = lineWidth,cap = cap)
-}
-// Hulpfunctie om de huidige tijd te krijgen
-
-fun getCurrentTime(is24hourFormat: Boolean = false): String {
-    // Set the format pattern based on the system's setting
-    val formatPattern = if (is24hourFormat) {
-        "HH:mm:ss"  // 24-hour format
-    } else {
-        "hh:mm:ss a"  // 12-hour format with AM/PM
-    }
-    val formatter = SimpleDateFormat(formatPattern, Locale.getDefault())
-    //println("format = $formatter.format(Date()), is24hourFormat = $is24hourFormat")
-    return formatter.format(Date())
-}
-// Same time, but always with ASCII digits so it can be parsed safely (see getTimeFromString)
-fun getCurrentTimeParsable(): String {
-    return SimpleDateFormat("HH:mm:ss", Locale.US).format(Date())
-}
-fun getCurrentDate(): String {
-    val formatter = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-    return formatter.format(Date())
-}
-fun getDateString(): String {
-    val locale = Locale.getDefault()
-    val dateFormat = SimpleDateFormat("EEEE, d MMMM yyyy", locale)
-    return dateFormat.format(Date())
-}
-fun getTimeFromString(timeString: String): Triple<Int, Int, Int> {
-    val hour = timeString.substring(0, 2).toInt()
-    val minute = timeString.substring(3, 5).toInt()
-    val second = timeString.substring(6, 8).toInt()
-    return Triple(hour, minute, second)
-}
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////
-// CALENDERS STUFF
-///////////////////////////////////////////////////////////////////////////////////////////////////
-data class CalendarEvent(
-    val id: Long,
-    val title: String,
-    val startTime: Long,
-    val endTime: Long,
-    val allDay: Boolean
-)
+data class CalendarEvent(val id: Long, val title: String, val startTime: Long, val endTime: Long, val allDay: Boolean)
 
 suspend fun saveCalendarName(context: Context, name: String) {
-    context.dataStore.edit { settings -> settings[CALENDAR_NAME_KEY] = name }
+    context.dataStore.edit { it[CALENDAR_NAME_KEY] = name }
 }
 
-suspend fun getSavedCalendarName(context: Context): String? {
-    return context.dataStore.data.first()[CALENDAR_NAME_KEY]
-}
+suspend fun getSavedCalendarName(context: Context): String? = context.dataStore.data.first()[CALENDAR_NAME_KEY]
 
 fun loadCalendars(context: Context): List<Pair<Int, String>> {
     val calendars = mutableListOf<Pair<Int, String>>()
     val projection = arrayOf(CalendarContract.Calendars._ID, CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)
-    val selection = CalendarContract.Calendars.VISIBLE + " = 1" // Alleen zichtbare kalenders
     val cursor = context.contentResolver.query(
-        CalendarContract.Calendars.CONTENT_URI, projection, selection, null, null
+        CalendarContract.Calendars.CONTENT_URI, projection, CalendarContract.Calendars.VISIBLE + " = 1", null, null
     )
     cursor?.use {
-        val idIndex = it.getColumnIndex(CalendarContract.Calendars._ID)
-        val nameIndex = it.getColumnIndex(CalendarContract.Calendars.CALENDAR_DISPLAY_NAME)
-        while (it.moveToNext()) {
-            calendars.add(it.getInt(idIndex) to it.getString(nameIndex))
-        }
+        while (it.moveToNext()) calendars.add(it.getInt(0) to (it.getString(1) ?: ""))
     }
     return calendars
 }
 
-@SuppressLint("Range")
-fun getNext10CalendarEvents(context: Context, calendarId: Int): List<CalendarEvent> {
-    val resolver: ContentResolver = context.contentResolver
+fun loadEvents(context: Context, calendarId: Int): List<CalendarEvent> {
     val now = System.currentTimeMillis()
-    val threeMonthsFromNow = now + 90L * 24 * 60 * 60 * 1000 // 90 dagen vooruit
-
     val builder = CalendarContract.Instances.CONTENT_URI.buildUpon()
     ContentUris.appendId(builder, now)
-    ContentUris.appendId(builder, threeMonthsFromNow)
-    val eventsUri = builder.build()
-
+    ContentUris.appendId(builder, now + 365L * 24 * 60 * 60 * 1000)
     val projection = arrayOf(
-        CalendarContract.Instances.EVENT_ID,
-        CalendarContract.Instances.TITLE,
-        CalendarContract.Instances.BEGIN,
-        CalendarContract.Instances.END,
-        CalendarContract.Instances.ALL_DAY
+        CalendarContract.Instances.EVENT_ID, CalendarContract.Instances.TITLE, CalendarContract.Instances.BEGIN,
+        CalendarContract.Instances.END, CalendarContract.Instances.ALL_DAY
     )
-
-    val selection = "${CalendarContract.Instances.CALENDAR_ID} = ?"
-    val selectionArgs = arrayOf(calendarId.toString())
-
-    val sortOrder = "${CalendarContract.Instances.BEGIN} ASC"
-
     val events = mutableListOf<CalendarEvent>()
-    val cursor = resolver.query(eventsUri, projection, selection, selectionArgs, sortOrder)
-
-    cursor?.use {
-        var count = 0
-        while (it.moveToNext() && count < 10) {
-            val event = CalendarEvent(
-                id = it.getLong(it.getColumnIndex(CalendarContract.Instances.EVENT_ID)),
-                title = it.getString(it.getColumnIndex(CalendarContract.Instances.TITLE)) ?: "----",
-                startTime = it.getLong(it.getColumnIndex(CalendarContract.Instances.BEGIN)),
-                endTime = it.getLong(it.getColumnIndex(CalendarContract.Instances.END)),
-                allDay = it.getInt(it.getColumnIndex(CalendarContract.Instances.ALL_DAY)) == 1
-            )
-            events.add(event)
-            count++
+    try {
+        context.contentResolver.query(
+            builder.build(), projection, "${CalendarContract.Instances.CALENDAR_ID} = ?", arrayOf(calendarId.toString()),
+            "${CalendarContract.Instances.BEGIN} ASC"
+        )?.use {
+            while (it.moveToNext() && events.size < AppSettings.EVENTS_RANGE.last) {
+                events.add(CalendarEvent(it.getLong(0), it.getString(1) ?: "", it.getLong(2), it.getLong(3), it.getInt(4) == 1))
+            }
         }
+    } catch (_: SecurityException) {
     }
-
     return events
 }
 
+// ---------------------------------------------------------------------------------------------
+// Formatting
+// ---------------------------------------------------------------------------------------------
 
-fun formatEventDate(startTime: Long): String {
-    val locale = Locale.getDefault()
-    val language = locale.language  // De taalcode, bijvoorbeeld "nl" voor Nederlands, "en" voor Engels
-
-    val calendar = Calendar.getInstance().apply { timeInMillis = startTime }
-    val today = Calendar.getInstance()
-    val tomorrow = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, 1) }
-
-    val dateFormat = SimpleDateFormat("EEEE, d MMMM", locale)
-
-    val vandaag = if(language == "nl") "Vandaag" else "Today"
-    val morgen = if(language == "nl") "Morgen" else "Tomorrow"
-    return when {
-        isSameDay(calendar, today) -> vandaag
-        isSameDay(calendar, tomorrow) -> morgen
-        else -> dateFormat.format(calendar.time)
-    }
+private fun clockTime(date: Date, seconds: Boolean, is24: Boolean): String {
+    val pattern = (if (is24) "HH:mm" else "h:mm") + (if (seconds) ":ss" else "") + (if (is24) "" else " a")
+    return SimpleDateFormat(pattern, Locale.getDefault()).format(date)
 }
 
-fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
-    return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
-            cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
-}
+private fun weekdayName(date: Date): String =
+    SimpleDateFormat("EEEE", Locale.getDefault()).format(date).replaceFirstChar { it.titlecase(Locale.getDefault()) }
 
-fun getCurrentTimeEvent(time: Long, is24hourFormat: Boolean): String {
-    // Set the format pattern based on the system's setting
-    //println("is24hourFormat = $is24hourFormat")
-    val formatPattern = if (is24hourFormat) {
-        "HH:mm"  // 24-hour format
-    } else {
-        "hh:mm a"  // 12-hour format with AM/PM
-    }
-    val formatter = SimpleDateFormat(formatPattern, Locale.getDefault())
-    return formatter.format(time)
-}
+private fun mediumDate(date: Date): String = java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM).format(date)
+private fun fullDate(date: Date): String = java.text.DateFormat.getDateInstance(java.text.DateFormat.FULL).format(date)
 
+// ---------------------------------------------------------------------------------------------
+// Screen
+// ---------------------------------------------------------------------------------------------
 
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
-fun DisplayCalendar() {
-    val context = LocalContext.current
-    val sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-    val editor = sharedPreferences.edit()
+fun MainScreen() {
+    val theme = AppSettings.colorStyle.theme
+    // The layout is positioned absolutely, so keep it left-to-right in RTL languages.
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .background(theme.background)
+                .windowInsetsPadding(androidx.compose.foundation.layout.WindowInsets.displayCutout)
+        ) {
+            MemoryMateContent(theme)
+        }
+    }
+}
 
-    val coroutineScope = rememberCoroutineScope()
-    var selectedCalendarId by remember { mutableStateOf<Int?>(null) }
-    var selectedCalendarName by remember { mutableStateOf<String?>(null) }
-    var calendars by remember { mutableStateOf<List<Pair<Int, String>>>(emptyList()) }
-    var showInfo by remember { mutableStateOf(false) }
-    var showSelectCalendar by remember { mutableStateOf(false) }
-    var textScale by remember { mutableIntStateOf(100) }
-    var calendarPermissionGranted by remember {
+@Composable
+private fun MemoryMateContent(theme: Theme) {
+    val context = LocalContext.current
+    val window = (context as? Activity)?.window
+    val scope = rememberCoroutineScope()
+    val haptic = LocalHapticFeedback.current
+    val is24 = DateFormat.is24HourFormat(context)
+
+    // Time and battery, refreshed every second
+    var now by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    var batteryPct by remember { mutableIntStateOf(-1) }
+    var plugged by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            now = System.currentTimeMillis()
+            val battery = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+            if (battery != null) {
+                val level = battery.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+                val scale = battery.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+                batteryPct = if (level >= 0 && scale > 0) level * 100 / scale else -1
+                plugged = battery.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0) != 0
+            }
+            delay(1000 - System.currentTimeMillis() % 1000)
+        }
+    }
+    // Keep the screen on only while charging
+    LaunchedEffect(plugged) {
+        if (plugged) window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        else window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
+
+    // Calendar permission and selection
+    var permissionGranted by remember {
         mutableStateOf(ContextCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED)
     }
+    var calendars by remember { mutableStateOf<List<Pair<Int, String>>>(emptyList()) }
+    var selectedId by remember { mutableStateOf<Int?>(null) }
+    var selectedName by remember { mutableStateOf<String?>(null) }
+    var showSettings by remember { mutableStateOf(false) }
+    var showChooser by remember { mutableStateOf(false) }
 
-    // Laad opgeslagen kalender-ID
-    LaunchedEffect(calendarPermissionGranted) {
-        if (calendarPermissionGranted) {
-            val savedName = getSavedCalendarName(context)
-            val calendarsList = loadCalendars(context)
-            val matchingCalendar = calendarsList.find { it.second == savedName }
-            selectedCalendarId = matchingCalendar?.first
-            selectedCalendarName = matchingCalendar?.second
-        }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        permissionGranted = granted
+        if (granted) calendars = loadCalendars(context)
     }
-    // Permission launcher
-    var openInfoAfterGrant by remember { mutableStateOf(false) }
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        calendarPermissionGranted = isGranted
-        if (isGranted && openInfoAfterGrant) {
+    LaunchedEffect(Unit) { if (!permissionGranted) launcher.launch(Manifest.permission.READ_CALENDAR) }
+    LaunchedEffect(permissionGranted) {
+        if (permissionGranted) {
             calendars = loadCalendars(context)
-            showInfo = true
-        }
-        openInfoAfterGrant = false
-    }
-
-    // Ask for the permission once at startup (not on every recomposition)
-    LaunchedEffect(Unit) {
-        if (!calendarPermissionGranted) {
-            permissionLauncher.launch(Manifest.permission.READ_CALENDAR)
+            val saved = getSavedCalendarName(context)
+            val match = calendars.find { it.second == saved }
+            selectedId = match?.first
+            selectedName = match?.second
         }
     }
 
-    Column(modifier = Modifier.padding(10.dp)) {
-        Text(
-            text = "\uD83D\uDDD3", // calendar emoji
-            fontSize = 25.sp,
-            modifier = Modifier
-                .clickable {
+    // Events, reloaded every 30 seconds and whenever the calendar changes
+    var events by remember { mutableStateOf<List<CalendarEvent>>(emptyList()) }
+    LaunchedEffect(permissionGranted, selectedId) {
+        val id = selectedId
+        while (permissionGranted && id != null) {
+            events = loadEvents(context, id)
+            delay(30_000)
+        }
+        if (id == null) events = emptyList()
+    }
 
-                    if (calendarPermissionGranted) {
-                        calendars = loadCalendars(context)
-                        showInfo = true
-                    } else {
-                        openInfoAfterGrant = true
-                        permissionLauncher.launch(Manifest.permission.READ_CALENDAR)
+    // Hint shown after a short tap on the calendar button
+    var hintVisible by remember { mutableStateOf(false) }
+    var hintCounter by remember { mutableIntStateOf(0) }
+    LaunchedEffect(hintCounter) {
+        if (hintCounter > 0) {
+            hintVisible = true
+            delay(3000)
+            hintVisible = false
+        }
+    }
+    val hintAlpha by animateFloatAsState(if (hintVisible) 1f else 0f, label = "hint")
+
+    val mode = AppSettings.clockMode
+    val clockStyle = AppSettings.clockStyle
+    val analogSeconds = AppSettings.analogSeconds
+    val digitalSeconds = AppSettings.digitalSeconds
+    val eventCount = AppSettings.displayedEvents
+    val textSize = AppSettings.textSize
+
+    BoxWithConstraints(Modifier.fillMaxSize()) {
+        val density = androidx.compose.ui.platform.LocalDensity.current
+        val wPx = with(density) { maxWidth.toPx() }
+        val hPx = with(density) { maxHeight.toPx() }
+        val portrait = hPx > wPx
+        val margin = (min(wPx, hPx) * 0.02f).roundToInt().toFloat()
+
+        // Clock side: top half (portrait) or left half (landscape), inset by the margin
+        val cx0 = margin; val cy0 = margin
+        val cw = (if (portrait) wPx else wPx / 2) - 2 * margin
+        val ch = (if (portrait) hPx / 2 else hPx) - 2 * margin
+        // Events side
+        val ex0 = (if (portrait) 0f else wPx / 2) + margin / 2
+        val ey0 = if (portrait) hPx / 2 else 0f
+        val ew = (if (portrait) wPx else wPx / 2) - margin
+        val eh = if (portrait) hPx / 2 else hPx
+
+        val icon = max(40f * density.density, min(cw, ch) * 0.1f)
+
+        // --- Clock side ---------------------------------------------------------------------
+        Canvas(Modifier.fillMaxSize()) {
+            val date = Date(now)
+            val fonts = ClockText(drawContext.canvas.nativeCanvas)
+            drawIntoCanvas { canvas ->
+                val c = canvas.nativeCanvas
+                // Clock + digital time + date
+                when (mode) {
+                    ClockMode.ANALOG ->
+                        ClockFace.draw(c, cx0, cy0, cw, ch, clockStyle, theme, analogSeconds)
+                    ClockMode.BOTH -> {
+                        val clockH = ch * 0.66f
+                        ClockFace.draw(c, cx0, cy0, cw, clockH, clockStyle, theme, analogSeconds)
+                        val labelW = min(cw * 0.75f, clockH * 1.1f)
+                        placeTexts(fonts, theme, date, digitalSeconds, is24, cx0, cw, cy0 + clockH + margin / 2,
+                            ch * 0.14f, labelW, ch * 0.18f, cy0 + ch)
                     }
+                    ClockMode.DIGITAL ->
+                        placeTexts(fonts, theme, date, digitalSeconds, is24, cx0, cw, cy0 + ch * 0.22f,
+                            ch * 0.36f, cw * 0.9f, ch * 0.22f, cy0 + ch)
                 }
-                .padding(12.dp)
-        )
-    }
+                // Calendar (settings) button, top left
+                drawCalendarIcon(c, cx0, cy0, icon, theme)
+                // Battery, top right
+                val bx = cx0 + cw - icon / 2; val by = cy0 + icon / 2
+                fonts.fillCircle(bx, by, icon / 2, theme.block.toArgb(), theme.border.toArgb(), 1f * density.density)
+                fonts.text(if (batteryPct < 0) "--" else "$batteryPct%", bx, by, icon * 0.3f,
+                    (if (plugged) theme.text else theme.warning).toArgb(), bold = true, maxWidth = icon * 0.86f)
+            }
+        }
 
-    @Composable
-    fun BulletItem(text: String) { // make a bullit list with correct spacing when lines are wrapped
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Top
+        // Hint pill
+        val hintW = 190.dp; val hintH = 56.dp
+        Box(
+            Modifier
+                .offset { androidx.compose.ui.unit.IntOffset(cx0.roundToInt(), (cy0 + icon + margin / 2).roundToInt()) }
+                .size(hintW, hintH)
+                .alpha(hintAlpha)
+                .background(theme.block, RoundedCornerShape(12.dp))
+                .border(1.dp, theme.accent, RoundedCornerShape(12.dp)),
+            contentAlignment = Alignment.Center
         ) {
-            Text( text = "●",  color = Color.Gray,  modifier = Modifier.padding(top = 1.dp, start = 6.dp) )
-            Spacer(modifier = Modifier.width(8.dp)) // Space between bullet and text
-            Column(  modifier = Modifier.padding(start = 2.dp) ) {
-                Text(  text = text, modifier = Modifier.fillMaxWidth(), color = Color.Gray )
-            }
+            Text("Hold for 2 seconds\nto open settings", color = theme.text, fontSize = 15.sp,
+                fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
         }
-    }
 
-    // Display starting point for settings and help
-    if (showInfo) {
-        AlertDialog(
-            onDismissRequest = { showInfo = false },
-            title = { Text("MemoryMate") },
-            text = {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(  text = "Version: ", color = Color.DarkGray, modifier = Modifier.weight(0.3f), fontWeight = FontWeight.Bold  )
-                            Text(  text = globalBuildInfo,  color = Color.Gray )
-                        } // row
-                        Spacer(modifier = Modifier.height(10.dp))
-                    }
-
-                    item {
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text( text = "Calender: ", color = Color.DarkGray, modifier = Modifier.weight(0.3f), fontWeight = FontWeight.Bold )
-                            Text(
-                                text = selectedCalendarName ?: "", // selected calendar
-                                color = Color.Gray,
-                            )
-                        } // row
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Button(onClick = {
-                                showSelectCalendar = true
-                            }) { Text(text = "Change Calendar") }
-                        }
-                        //HorizontalDivider( modifier = Modifier.padding(vertical = 15.dp),  thickness = 2.dp, color = Color.Gray )
-                    } // item
-
-                    // textScaling
-                    item {
-                        var localScale by remember { mutableIntStateOf(textScale) } // werkt in % (50..150)
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = "Text Scaling:",
-                                    color = Color.DarkGray, modifier = Modifier.weight(0.3f), fontWeight = FontWeight.Bold
-                                )
-                                Text("$localScale%")
+        // Invisible touch target on top of the calendar icon: tap shows the hint, a 2 second hold opens settings
+        Box(
+            Modifier
+                .offset { androidx.compose.ui.unit.IntOffset(cx0.roundToInt(), cy0.roundToInt()) }
+                .size(with(density) { icon.toDp() })
+                .semantics { contentDescription = "Settings (hold for 2 seconds)" }
+                .pointerInput(Unit) {
+                    detectTapGestures(onPress = {
+                        val result = withTimeoutOrNull(HOLD_MILLIS) { tryAwaitRelease() }
+                        when (result) {
+                            null -> {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                hintVisible = false
+                                calendars = if (permissionGranted) loadCalendars(context) else calendars
+                                showSettings = true
                             }
-
-                            Slider(
-                                value = localScale.toFloat(),
-                                onValueChange = { v ->
-                                    // Snap naar dichtstbijzijnde 5%
-                                    val snapped = ((v / 10f).roundToInt() * 10)
-                                        .coerceIn(50, 200)
-                                    localScale = snapped
-                                },
-                                valueRange = 50f..200f,
-                                // 10%-stappen: 50..150 => 21 waardes => steps = 21 - 2 = 19
-                                steps = 15,
-                                onValueChangeFinished = {
-                                    textScale = localScale
-                                    editor.putInt("textScale", textScale)
-                                    editor.apply()
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                            true -> hintCounter++
+                            else -> {}
                         }
-                    }
-
-                    item {
-                        Text( text = "How to use:", fontWeight = FontWeight.Bold, color = Color.DarkGray )
-                        BulletItem( "Select the appropriate Calendar," )
-                        BulletItem( "Double click Clock to select different display modes," )
-                        BulletItem( "Double click Calendar to select different amount of events.")
-                    }
+                    })
                 }
-            },
-            confirmButton = {
-                Button(onClick = { showInfo = false }) {
-                    Text("Close")
-                }
-            }
         )
-    }
 
-
-
-    // select calendar
-    if (showSelectCalendar) {
-        AlertDialog(
-            onDismissRequest = { showSelectCalendar = false },
-            title = { Text("Select Calendar") },
-            text = {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    LazyColumn(
-                        modifier = Modifier
-                            .background(Color.White)
-                            .height(400.dp)
-                    ) {
-                        items(calendars) { (id, name) ->
-                            Text(
-                                name, modifier = Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    if (id == selectedCalendarId) Color(0xFF9999EE) else Color(
-                                        0xFFFFFFFF
-                                    )
-                                ) // Geselecteerde kleur
-                                .clickable {
-                                    //println("-----------> Selected calendar ID: $id, Name: $name")
-                                    selectedCalendarId = id
-                                    selectedCalendarName = name
-                                    coroutineScope.launch { saveCalendarName(context, name) }
-                                    showSelectCalendar = false
-                                }
-                                .padding(3.dp))
-                        }
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { showSelectCalendar = false }) {
-                    Text("Close")
-                }
+        // --- Events -------------------------------------------------------------------------
+        Canvas(Modifier.fillMaxSize()) {
+            drawIntoCanvas { canvas ->
+                drawEventBlocks(canvas.nativeCanvas, events, eventCount, textSize, theme, is24, ex0, ey0, ew, eh, density.density)
             }
-        )
-    }
-
-
-    val is24HourFormat = DateFormat.is24HourFormat(context)
-
-    var currentTime by remember { mutableStateOf(getCurrentTime()) }
-    var updater by remember { mutableIntStateOf(0) }
-
-    LaunchedEffect(updater) {
-        while (true) {
-            delay(10.seconds) // Wacht 10 seconde
-            currentTime = getCurrentDate() // Update de tijd
-            updater++
         }
     }
-    if (calendarPermissionGranted) {
-        if (selectedCalendarId != null) {
-            val events = getNext10CalendarEvents(context, calendarId = selectedCalendarId ?: 0)
-            val configuration = LocalConfiguration.current
-            val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
 
-            var lastClickTime by remember { mutableLongStateOf(0L) } // Store the last click time
-            var eventAmount by remember { mutableIntStateOf(EVENT_AMOUNT_DEFAULT) } // Store the last click time
+    if (showSettings) {
+        SettingsDialog(
+            theme = theme,
+            onChooseCalendar = {
+                showSettings = false
+                if (permissionGranted) {
+                    calendars = loadCalendars(context)
+                    showChooser = true
+                } else launcher.launch(Manifest.permission.READ_CALENDAR)
+            },
+            onDone = { showSettings = false }
+        )
+    }
 
-            eventAmount = sharedPreferences.getInt("eventAmount", EVENT_AMOUNT_DEFAULT)
-            textScale = sharedPreferences.getInt("textScale", 100)
+    if (showChooser) {
+        CalendarChooser(theme, calendars, selectedId,
+            onSelect = { id, name ->
+                selectedId = id; selectedName = name
+                scope.launch { saveCalendarName(context, name) }
+                showChooser = false
+            },
+            onCancel = { showChooser = false })
+    }
+}
 
-            Box(
+// ---------------------------------------------------------------------------------------------
+// Drawing helpers
+// ---------------------------------------------------------------------------------------------
+
+/** Small helper for centered, auto-fitting text and circles on a native canvas. */
+private class ClockText(private val canvas: android.graphics.Canvas) {
+    private val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+
+    fun text(s: String, cx: Float, cy: Float, size: Float, color: Int, bold: Boolean, maxWidth: Float = Float.MAX_VALUE,
+             mono: Boolean = false) {
+        paint.reset(); paint.isAntiAlias = true
+        paint.typeface = android.graphics.Typeface.create(
+            if (mono) android.graphics.Typeface.MONOSPACE else android.graphics.Typeface.DEFAULT,
+            if (bold) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
+        paint.textSize = size
+        val w = paint.measureText(s)
+        if (w > maxWidth) paint.textSize = size * maxWidth / w
+        paint.color = color
+        paint.textAlign = android.graphics.Paint.Align.CENTER
+        val fm = paint.fontMetrics
+        canvas.drawText(s, cx, cy - (fm.ascent + fm.descent) / 2, paint)
+    }
+
+    fun fillCircle(cx: Float, cy: Float, r: Float, fill: Int, stroke: Int, strokeWidth: Float) {
+        paint.reset(); paint.isAntiAlias = true
+        paint.color = fill
+        canvas.drawCircle(cx, cy, r, paint)
+        paint.style = android.graphics.Paint.Style.STROKE
+        paint.strokeWidth = strokeWidth
+        paint.color = stroke
+        canvas.drawCircle(cx, cy, r - strokeWidth / 2, paint)
+    }
+
+    fun roundRect(l: Float, t: Float, r: Float, b: Float, radius: Float, fill: Int, stroke: Int, strokeWidth: Float) {
+        paint.reset(); paint.isAntiAlias = true
+        paint.color = fill
+        canvas.drawRoundRect(l, t, r, b, radius, radius, paint)
+        paint.style = android.graphics.Paint.Style.STROKE
+        paint.strokeWidth = strokeWidth
+        paint.color = stroke
+        val h = strokeWidth / 2
+        canvas.drawRoundRect(l + h, t + h, r - h, b - h, radius, radius, paint)
+    }
+}
+
+/** Digital time in a rounded block plus the date underneath. */
+private fun placeTexts(
+    f: ClockText, theme: Theme, date: Date, seconds: Boolean, is24: Boolean,
+    areaX: Float, areaW: Float, timeY: Float, timeH: Float, width: Float, dateH: Float, bottom: Float
+) {
+    val midX = areaX + areaW / 2
+    f.roundRect(midX - width / 2, timeY, midX + width / 2, timeY + timeH, 12f * 2.2f.coerceAtMost(timeH / 8), theme.block.toArgb(),
+        theme.border.toArgb(), 2f)
+    f.text(clockTime(date, seconds, is24), midX, timeY + timeH / 2, timeH * 0.78f, theme.text.toArgb(), bold = true,
+        maxWidth = width * 0.94f, mono = true)
+    val dateTop = timeY + timeH + 4f
+    val h = min(dateH, bottom - dateTop)
+    val size = dateH * 0.36f
+    f.text(weekdayName(date), midX, dateTop + h * 0.27f, size, theme.text.toArgb(), bold = true, maxWidth = areaW)
+    f.text(mediumDate(date), midX, dateTop + h * 0.73f, size, theme.text.toArgb(), bold = true, maxWidth = areaW)
+}
+
+/** Calendar icon: page with a header band and a grid of days, drawn in the theme colors. */
+private fun drawCalendarIcon(c: android.graphics.Canvas, x: Float, y: Float, s: Float, theme: Theme) {
+    val p = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG)
+    val rad = s * 0.16f
+    p.color = theme.block.toArgb()
+    c.drawRoundRect(x, y, x + s, y + s, rad, rad, p)
+    p.style = android.graphics.Paint.Style.STROKE
+    p.strokeWidth = max(1f, s * 0.03f)
+    p.color = theme.border.toArgb()
+    c.drawRoundRect(x + p.strokeWidth / 2, y + p.strokeWidth / 2, x + s - p.strokeWidth / 2, y + s - p.strokeWidth / 2, rad, rad, p)
+    p.style = android.graphics.Paint.Style.FILL
+    p.color = theme.accent.toArgb()
+    val save = c.save()
+    c.clipRect(x, y, x + s, y + s * 0.3f)
+    c.drawRoundRect(x, y, x + s, y + s * 0.5f, rad, rad, p)
+    c.restoreToCount(save)
+    p.color = theme.text.toArgb()
+    val cell = s * 0.13f
+    for (row in 0..2) for (col in 0..3) {
+        val gx = x + s * 0.17f + col * s * 0.18f
+        val gy = y + s * 0.42f + row * s * 0.17f
+        c.drawRoundRect(gx, gy, gx + cell, gy + cell, cell * 0.25f, cell * 0.25f, p)
+    }
+}
+
+/** The event blocks: date (accent), time (secondary), title (primary). Text that does not fit is scaled down to 60%. */
+private fun drawEventBlocks(
+    c: android.graphics.Canvas, events: List<CalendarEvent>, count: Int, textSizePct: Int, theme: Theme,
+    is24: Boolean, x: Float, y: Float, w: Float, h: Float, dp: Float
+) {
+    val gap = max(4f * dp, h * 0.01f)
+    val rowH = (h - gap) / count - gap
+    val base = rowH * 0.2f * textSizePct / 100f
+    val insetX = 16f * dp; val insetY = 8f * dp
+    val f = ClockText(c)
+    val corner = 12f * dp
+
+    for (i in 0 until count) {
+        val top = y + i * rowH + (i + 1) * gap
+        f.roundRect(x, top, x + w, top + rowH, corner, theme.block.toArgb(), theme.border.toArgb(), dp)
+        val event = events.getOrNull(i) ?: continue
+        val availW = (w - 2 * insetX).roundToInt()
+        val availH = rowH - 2 * insetY
+        if (availW <= 0) continue
+
+        val start = Date(event.startTime)
+        val times = if (event.allDay) "All day" else
+            clockTime(start, false, is24) + " - " + clockTime(Date(event.endTime), false, is24)
+        var scale = 1f
+        var layout = buildEventLayout(fullDate(start), times, event.title, base, scale, theme, availW)
+        while (scale > 0.6f && layout.height > availH) {
+            scale -= 0.05f
+            layout = buildEventLayout(fullDate(start), times, event.title, base, scale, theme, availW)
+        }
+        val save = c.save()
+        c.clipRect(x, top, x + w, top + rowH)
+        c.translate(x + insetX, top + insetY)
+        layout.draw(c)
+        c.restoreToCount(save)
+    }
+}
+
+private fun buildEventLayout(
+    date: String, times: String, title: String, base: Float, scale: Float, theme: Theme, width: Int
+): android.text.StaticLayout {
+    val sb = android.text.SpannableStringBuilder()
+    fun line(s: String, size: Float, bold: Boolean, color: Color) {
+        val start = sb.length
+        sb.append(s)
+        sb.setSpan(android.text.style.AbsoluteSizeSpan(max(1f, size * scale).roundToInt(), false), start, sb.length, 0)
+        sb.setSpan(android.text.style.ForegroundColorSpan(color.toArgb()), start, sb.length, 0)
+        sb.setSpan(android.text.style.StyleSpan(if (bold) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL),
+            start, sb.length, 0)
+    }
+    line(date + "\n", base * 0.85f, true, theme.accent)
+    line(times + "\n", base * 0.85f, false, theme.secondary)
+    line(title, base * 1.15f, true, theme.text)
+    return android.text.StaticLayout.Builder.obtain(sb, 0, sb.length, android.text.TextPaint(), width)
+        .setAlignment(android.text.Layout.Alignment.ALIGN_NORMAL)
+        .build()
+}
+
+// ---------------------------------------------------------------------------------------------
+// Settings dialog
+// ---------------------------------------------------------------------------------------------
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun <T> Choice(items: List<T>, selected: T, theme: Theme, title: (T) -> String, onSelect: (T) -> Unit) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        for (item in items) {
+            val on = item == selected
+            Text(
+                title(item),
+                color = if (on) theme.background else theme.text,
+                fontSize = 15.sp,
+                fontWeight = if (on) FontWeight.Bold else FontWeight.Medium,
                 modifier = Modifier
-                    .fillMaxSize()
-
-            ) {
-                BoxWithConstraints(
-                    modifier = Modifier
-                        //.background(COLOR_BACKGROUND)
-                        .clickable {
-                            val nowTime = System.currentTimeMillis()
-                            if (nowTime - lastClickTime <= doubleClickThreshold) {
-                                eventAmount =
-                                    if (eventAmount < EVENT_AMOUNT_MAX) eventAmount + 1 else EVENT_AMOUNT_MIN
-                                editor.putInt("eventAmount", eventAmount)
-                                editor.apply() // Opslaan
-                            }
-                            lastClickTime = nowTime
-
-                        }
-                        .padding(10.dp)
-                        .then(
-                            if (isPortrait) {
-                                Modifier
-                                    .fillMaxWidth()
-                                    .fillMaxHeight(0.5f) // Bovenste helft in portret
-                                    .align(Alignment.BottomEnd)
-                            } else {
-                                Modifier
-                                    .fillMaxHeight()
-                                    .fillMaxWidth(0.5f) // Linker helft in landschap
-                                    .align(Alignment.CenterEnd)
-                            }
-                        ),
-                    //contentAlignment = Alignment.Center // Tekst in het midden
-                ) {
-                    //val maxHeight = maxHeight
-                    //val fontSize = calculateFontSizeToFit("l", (maxHeight/eventAmount))
-                    //            val dpList: List<TextUnit> = listOf(5.sp,5.sp,5.sp,25.sp,22.sp,20.sp,21.sp,17.sp,15.sp,12.sp,9.sp,8.sp,7.sp,6.sp,5.sp,4.sp,3.sp,2.sp,1.sp)
-                    //            var fontSize = dpList[eventAmount]
-
-                    // calc
-//                    val displayMetrics = Resources.getSystem().displayMetrics
-//                    val screenHeightPx =
-//                        if (isPortrait) displayMetrics.heightPixels / 2 else displayMetrics.heightPixels
-//                    val density = displayMetrics.density
-//                    val screenHeightDp = screenHeightPx / density
-//                    val lineHeightDp = screenHeightDp / (max(5, eventAmount) * 11)
-//                    val fontSize = (textScale * lineHeightDp * density/100).sp
-
-
-//                    val displayMetrics = Resources.getSystem().displayMetrics
-//                    val density = displayMetrics.density
-//                    val widthDp = displayMetrics.widthPixels / density
-//                    val heightDp = displayMetrics.heightPixels / density
-//                    val smallestWidthDp = min(widthDp, heightDp)
-//
-//// Bepaal schaalfactor, bv. baseline = 360dp
-//                    val scale = smallestWidthDp / 360f
-//
-//                    val lineHeightDp = heightDp / (max(5, eventAmount) * 15)
-//                    val fontSize = (textScale * lineHeightDp * scale/100).sp
-//
-
-                    val displayMetrics = Resources.getSystem().displayMetrics
-                    val density = displayMetrics.density
-                    val widthDp = displayMetrics.widthPixels / density
-                    val heightDp = displayMetrics.heightPixels / density
-                    val smallestWidthDp = min(widthDp, heightDp)
-
-                    // Niet-lineaire schaal: map 360dp→~1.15x en 600dp→~1.60x, met clamping
-                    fun lerp(a: Float, b: Float, t: Float) = a + (b - a) * t
-                    val t = ((smallestWidthDp - 360f) / (600f - 360f)).coerceIn(0f, 1f)
-                    val scale = lerp(2.55f, 1.99f, t) // telefoons krijgen al ~+15%, tablets groeien door tot ~+60%
-
-// Je bestaande regelhoogte (eventAmount iets ruimer gezet met 15)
-                    val lineHeightDp = heightDp / (max(5, eventAmount) * 15)
-
-// Bereken sp en zet een ondergrens (bv. 12sp)
-                    val computedSp = (lineHeightDp * scale).coerceAtLeast(10f)
-                    val fontSize = (textScale * computedSp / 100).sp
-
-                    //println("fontSize: $fontSize, maxHeight: ${maxHeight/eventAmount}")
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.SpaceEvenly, // Distribute evenly
-                        horizontalAlignment = Alignment.Start // Center horizontally
-                    ) {
-                        repeat(eventAmount) { index ->
-                            // format event
-                            var textLeft = "---"
-                            var textRight = ""
-                            if (index < events.size) {
-                                val date = formatEventDate(events[index].startTime)
-                                val starttime =
-                                    getCurrentTimeEvent(events[index].startTime, is24HourFormat)
-                                val endtime =
-                                    getCurrentTimeEvent(events[index].endTime, is24HourFormat)
-                                val allDay = events[index].allDay
-                                val title = events[index].title
-                                textLeft = "$date\n$title"
-                                textRight = if (allDay) "" else "$starttime\n$endtime"
-                            }
-
-                            BoxWithConstraints(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f) // Verdeelt de hoogte gelijk over aantal Boxen
-                                    .padding(2.dp)
-                                    .background(
-                                        COLOR_BACK,
-                                        shape = RoundedCornerShape(10.dp)
-                                    ), // Unieke achtergrondkleur
-
-                                contentAlignment = Alignment.Center
-                            ) {
-                                val paddingValLong = maxWidth * 0.5f
-                                val paddingValShort = maxWidth * 0.3f
-                                Text(
-                                    text = textLeft,
-                                    modifier = Modifier.align(Alignment.CenterStart)
-                                        .padding(start = 15.dp, end = paddingValShort),
-                                    color = Color.White,
-                                    fontSize = fontSize, //20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                                Text(
-                                    text = textRight,
-                                    modifier = Modifier.align(Alignment.CenterEnd)
-                                        .padding(start = paddingValLong, end = 15.dp),
-                                    color = Color.White,
-                                    fontSize = fontSize, //20.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                        }
-                    }
-
-                } // box with constraints
-            } // box main
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(if (on) theme.accent else theme.block)
+                    .border(1.dp, if (on) theme.accent else theme.border, RoundedCornerShape(10.dp))
+                    .clickable { onSelect(item) }
+                    .padding(horizontal = 14.dp, vertical = 10.dp)
+            )
         }
     }
 }
 
+@Composable
+private fun Section(name: String, theme: Theme, content: @Composable () -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(name, color = theme.secondary, fontSize = 15.sp, fontWeight = FontWeight.Bold)
+        content()
+    }
+}
 
+@Composable
+private fun SwitchRow(title: String, checked: Boolean, theme: Theme, onChange: (Boolean) -> Unit) {
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(title, color = theme.text, fontSize = 18.sp, fontWeight = FontWeight.Bold, modifier = Modifier.weight(1f))
+        Switch(
+            checked = checked, onCheckedChange = onChange,
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = theme.background, checkedTrackColor = theme.accent,
+                uncheckedThumbColor = theme.secondary, uncheckedTrackColor = theme.block, uncheckedBorderColor = theme.border
+            )
+        )
+    }
+}
 
+@Composable
+private fun StepButton(label: String, theme: Theme, enabled: Boolean, onClick: () -> Unit) {
+    Text(
+        label, color = if (enabled) theme.text else theme.border, fontSize = 22.sp, fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .width(48.dp)
+            .clip(RoundedCornerShape(10.dp))
+            .background(theme.block)
+            .border(1.dp, theme.border, RoundedCornerShape(10.dp))
+            .clickable(enabled = enabled) { onClick() }
+            .padding(vertical = 6.dp)
+    )
+}
 
+@Composable
+private fun SettingsDialog(theme: Theme, onChooseCalendar: () -> Unit, onDone: () -> Unit) {
+    Dialog(onDismissRequest = onDone, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Column(
+            Modifier
+                .padding(16.dp)
+                .widthIn(max = 620.dp)
+                .fillMaxWidth()
+                .heightIn(max = 820.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(theme.background)
+                .border(1.dp, theme.border, RoundedCornerShape(20.dp))
+                .verticalScroll(rememberScrollState())
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            Text("Settings", color = theme.text, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Text(
+                "Choose calendar", color = theme.accent, fontSize = 18.sp, fontWeight = FontWeight.Bold,
+                modifier = Modifier.clickable { onChooseCalendar() }.padding(vertical = 4.dp)
+            )
+            Section("Color style", theme) {
+                Choice(ColorStyle.entries, AppSettings.colorStyle, theme, { it.title }) { AppSettings.updateColorStyle(it) }
+            }
+            Section("Clock", theme) {
+                Choice(ClockMode.entries, AppSettings.clockMode, theme, { it.title }) { AppSettings.updateClockMode(it) }
+            }
+            Section("Analog clock style", theme) {
+                Choice(ClockStyle.entries, AppSettings.clockStyle, theme, { it.title }) { AppSettings.updateClockStyle(it) }
+            }
+            Section("Show seconds", theme) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SwitchRow("Analog clock", AppSettings.analogSeconds, theme) { AppSettings.updateAnalogSeconds(it) }
+                    SwitchRow("Digital clock", AppSettings.digitalSeconds, theme) { AppSettings.updateDigitalSeconds(it) }
+                }
+            }
+            Section("Displayed events", theme) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text("${AppSettings.displayedEvents}", color = theme.text, fontSize = 18.sp, fontWeight = FontWeight.Bold,
+                        modifier = Modifier.widthIn(min = 60.dp))
+                    StepButton("−", theme, AppSettings.displayedEvents > AppSettings.EVENTS_RANGE.first) {
+                        AppSettings.updateDisplayedEvents(AppSettings.displayedEvents - 1)
+                    }
+                    StepButton("+", theme, AppSettings.displayedEvents < AppSettings.EVENTS_RANGE.last) {
+                        AppSettings.updateDisplayedEvents(AppSettings.displayedEvents + 1)
+                    }
+                }
+            }
+            Section("Event text size", theme) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text("${AppSettings.textSize}%", color = theme.text, fontSize = 18.sp, fontWeight = FontWeight.Bold,
+                        modifier = Modifier.widthIn(min = 60.dp))
+                    Slider(
+                        value = AppSettings.textSize.toFloat(),
+                        onValueChange = { AppSettings.updateTextSize((it / 10).roundToInt() * 10) },
+                        valueRange = AppSettings.TEXT_SIZE_RANGE.first.toFloat()..AppSettings.TEXT_SIZE_RANGE.last.toFloat(),
+                        steps = 8,
+                        colors = SliderDefaults.colors(
+                            thumbColor = theme.accent, activeTrackColor = theme.accent,
+                            inactiveTrackColor = theme.border, activeTickColor = theme.background,
+                            inactiveTickColor = theme.secondary
+                        ),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+            Text(
+                "Done", color = theme.accent, fontSize = 20.sp, fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().clickable { onDone() }.padding(vertical = 8.dp)
+            )
+        }
+    }
+}
 
+@Composable
+private fun CalendarChooser(
+    theme: Theme, calendars: List<Pair<Int, String>>, selectedId: Int?,
+    onSelect: (Int, String) -> Unit, onCancel: () -> Unit
+) {
+    Dialog(onDismissRequest = onCancel, properties = DialogProperties(usePlatformDefaultWidth = false)) {
+        Column(
+            Modifier
+                .padding(16.dp)
+                .widthIn(max = 620.dp)
+                .fillMaxWidth()
+                .heightIn(max = 700.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(theme.background)
+                .border(1.dp, theme.border, RoundedCornerShape(20.dp))
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text("Choose calendar", color = theme.text, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (calendars.isEmpty()) {
+                    Text("No calendars found. Allow calendar access for MemoryMate in the system settings.",
+                        color = theme.secondary, fontSize = 16.sp)
+                }
+                for ((id, name) in calendars) {
+                    val on = id == selectedId
+                    Text(
+                        name, color = if (on) theme.background else theme.text, fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(if (on) theme.accent else theme.block)
+                            .border(1.dp, if (on) theme.accent else theme.border, RoundedCornerShape(10.dp))
+                            .clickable { onSelect(id, name) }
+                            .padding(14.dp)
+                    )
+                }
+            }
+            Text(
+                "Cancel", color = theme.accent, fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth().clickable { onCancel() }.padding(vertical = 8.dp)
+            )
+        }
+    }
+}
